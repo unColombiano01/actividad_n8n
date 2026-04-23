@@ -1,0 +1,34 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "actividad",
+        "formDescription": "actividad del 23 de abril 2026",
+        "formFields": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1712da4b-832c-4fe6-8e3a-92f96c8ddebd",
+      "name": "On form submission",
+      "webhookId": "7c140b85-d506-4019-b6a3-8907904837c6"
+    }
+  ],
+  "connections": {
+    "On form submission": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "fddb7eb1f9d8ab3fabc315e1f703eabdba49242dd1c2e33a3a1a31d80dd61528"
+  }
+}
