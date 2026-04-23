@@ -1,0 +1,54 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "actividad",
+        "formDescription": "actividad del 23 de abril 2026",
+        "formFields": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -560,
+        0
+      ],
+      "id": "1712da4b-832c-4fe6-8e3a-92f96c8ddebd",
+      "name": "On form submission",
+      "webhookId": "7c140b85-d506-4019-b6a3-8907904837c6"
+    },
+    {
+      "parameters": {
+        "url": "https://api.chucknorris.io/jokes/random",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -384,
+        0
+      ],
+      "id": "55b59d36-d287-47a1-8f1c-e06a59af4d42",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "fddb7eb1f9d8ab3fabc315e1f703eabdba49242dd1c2e33a3a1a31d80dd61528"
+  }
+}
