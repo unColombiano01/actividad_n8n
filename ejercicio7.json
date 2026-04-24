@@ -1,0 +1,190 @@
+{
+    "nodes": [
+      {
+        "parameters": {
+          "formTitle": "Rick and Morty",
+          "formDescription": "Consulta en la API de Rick and Morty y ademas el clima en un pais random",
+          "formFields": {
+            "values": [
+              {
+                "fieldLabel": "Id ",
+                "placeholder": "Ingrese un ID"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.formTrigger",
+        "typeVersion": 2.5,
+        "position": [
+          -80,
+          2256
+        ],
+        "id": "32bd4def-c9e5-43f8-9e42-2915a6f04985",
+        "name": "Request1",
+        "webhookId": "8437eca1-d1c4-49e1-9eeb-65797599182c"
+      },
+      {
+        "parameters": {
+          "mode": "combine",
+          "combineBy": "combineAll",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          864,
+          2240
+        ],
+        "id": "f0ff60d0-85dc-494d-99b2-ead338d6676f",
+        "name": "Merge"
+      },
+      {
+        "parameters": {
+          "url": "=https://devsapihub.com/api-movies/{{ $json['Id '] }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          272,
+          2160
+        ],
+        "id": "b65b5715-d294-4c1b-be6c-11d904f92c4f",
+        "name": "HTTP Request2"
+      },
+      {
+        "parameters": {
+          "url": "=https://rickandmortyapi.com/api/character/ {{ $json['Id character'] }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          272,
+          2352
+        ],
+        "id": "1248605f-60e8-4dfb-b72b-1a7516401b39",
+        "name": "Request Rick and Morty1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "45785859-facc-4e79-a485-6f9c80eb0df6",
+                "name": "character",
+                "value": "={{ $json.results[0].name }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          512,
+          2352
+        ],
+        "id": "b2b14eb7-382d-409f-8c28-5f5c4742b115",
+        "name": "Edit Fields4"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "45785859-facc-4e79-a485-6f9c80eb0df6",
+                "name": "title",
+                "value": "={{ $json.title }}",
+                "type": "string"
+              },
+              {
+                "id": "7ba4985d-98be-4109-9976-4b0062599b89",
+                "name": "Description",
+                "value": "={{ $json.description }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          496,
+          2160
+        ],
+        "id": "b26b61aa-ad1f-4cd9-be39-d5762c2adc62",
+        "name": "Edit Fields5"
+      }
+    ],
+    "connections": {
+      "Request1": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request2",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Request Rick and Morty1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request2": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields5",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Request Rick and Morty1": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields4": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Edit Fields5": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "pinData": {},
+    "meta": {
+      "templateCredsSetupCompleted": true,
+      "instanceId": "4d145fd139d1eaaf23eb84fb90956419885a76b409816c7f74cf5f25b26e2dfe"
+    }
+  }
