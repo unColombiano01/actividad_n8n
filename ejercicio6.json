@@ -1,0 +1,116 @@
+{
+    "nodes": [
+      {
+        "parameters": {
+          "formTitle": "Rick and Morty",
+          "formDescription": "Consulta en la API ",
+          "formFields": {
+            "values": [
+              {
+                "fieldLabel": "Id character",
+                "placeholder": "Ingrese un ID"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.formTrigger",
+        "typeVersion": 2.5,
+        "position": [
+          16,
+          1712
+        ],
+        "id": "e83138b2-54f8-43c0-85dd-1369f684f9ac",
+        "name": "On form submission",
+        "webhookId": "bb8398b2-9657-46df-b140-3f61b832403b"
+      },
+      {
+        "parameters": {
+          "url": "=https://rickandmortyapi.com/api/character/ {{ $json['Id character'] }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          256,
+          1712
+        ],
+        "id": "55e224c0-6618-4db5-82f7-9d7b29fd3a7c",
+        "name": "HTTP Request2"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "45785859-facc-4e79-a485-6f9c80eb0df6",
+                "name": "character",
+                "value": "={{ $json.name }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          464,
+          1712
+        ],
+        "id": "0f321d72-c7a2-4de6-8e4d-d58b870c9477",
+        "name": "Edit Fields2"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          672,
+          1712
+        ],
+        "id": "5ccecf98-0aee-4927-b005-b28917dd6235",
+        "name": "No Operation, do nothing3"
+      }
+    ],
+    "connections": {
+      "On form submission": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request2": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields2": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "pinData": {},
+    "meta": {
+      "templateCredsSetupCompleted": true,
+      "instanceId": "4d145fd139d1eaaf23eb84fb90956419885a76b409816c7f74cf5f25b26e2dfe"
+    }
+  }
