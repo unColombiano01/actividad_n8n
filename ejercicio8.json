@@ -1,0 +1,224 @@
+{
+    "nodes": [
+      {
+        "parameters": {
+          "formTitle": "Old vs new",
+          "formDescription": "Busqueda por generacion de peliculas",
+          "formFields": {
+            "values": [
+              {
+                "fieldLabel": "old vs new",
+                "fieldType": "checkbox",
+                "fieldOptions": {
+                  "values": [
+                    {
+                      "option": "Old"
+                    },
+                    {
+                      "option": "New"
+                    }
+                  ]
+                },
+                "requiredField": true
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.formTrigger",
+        "typeVersion": 2.5,
+        "position": [
+          -176,
+          2672
+        ],
+        "id": "03b05924-2523-4eeb-9852-64a30df3ffd2",
+        "name": "On form submission",
+        "webhookId": "dc3b7f5c-45a3-455b-bfb6-282e8fe5f5a8"
+      },
+      {
+        "parameters": {
+          "url": "=https://devsapihub.com/api-movies",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          320,
+          2592
+        ],
+        "id": "add455a7-9448-479e-bc29-d45e250ba93d",
+        "name": "HTTP Request3"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "3121493d-f8df-49ba-8bfc-cc23880befbc",
+                "leftValue": "={{ $json.year }}",
+                "rightValue": 2010,
+                "operator": {
+                  "type": "number",
+                  "operation": "lt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.3,
+        "position": [
+          592,
+          2592
+        ],
+        "id": "a6c5a0d5-5f9f-425b-8a5e-2ae05b9ca4c4",
+        "name": "Filter"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "a3949093-e356-46ee-bb90-78ffa5e92b00",
+                "leftValue": "={{ $json['old vs new'][0] }}",
+                "rightValue": "=Old",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          32,
+          2672
+        ],
+        "id": "dc5b4f9d-b6a0-4852-8069-d05c05c29339",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "url": "=https://devsapihub.com/api-movies",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.4,
+        "position": [
+          288,
+          2752
+        ],
+        "id": "af27209c-5cda-4194-8589-54fa32371672",
+        "name": "HTTP Request4"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "3121493d-f8df-49ba-8bfc-cc23880befbc",
+                "leftValue": "={{ $json.year }}",
+                "rightValue": 2010,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.3,
+        "position": [
+          560,
+          2752
+        ],
+        "id": "d19eef57-6e87-4709-a814-cec4deca0427",
+        "name": "Filter1"
+      }
+    ],
+    "connections": {
+      "On form submission": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request3": {
+        "main": [
+          [
+            {
+              "node": "Filter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request3",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "HTTP Request4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request4": {
+        "main": [
+          [
+            {
+              "node": "Filter1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "pinData": {},
+    "meta": {
+      "templateCredsSetupCompleted": true,
+      "instanceId": "4d145fd139d1eaaf23eb84fb90956419885a76b409816c7f74cf5f25b26e2dfe"
+    }
+  }
