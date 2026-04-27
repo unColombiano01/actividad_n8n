@@ -1,0 +1,243 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b5f7859c-3f2c-4965-8642-93fc4167a7a7",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -672,
+        -672
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://newsapi.org/v2/everything?q=tesla&sortBy=publishedAt&apiKey=e55d876af3534700b16c6a5980ee5abf",
+        "options": {}
+      },
+      "id": "c2636429-24e3-4f66-a74c-49016eabef08",
+      "name": "Get News",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -480,
+        -672
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"status\"]}}",
+              "value2": "ok"
+            }
+          ]
+        }
+      },
+      "id": "6cdfcfcd-b778-4c3f-938f-33c5328c063a",
+      "name": "Check API Status",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -672
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "articles",
+        "options": {}
+      },
+      "id": "4145a27b-8a49-4604-b344-b31a32a14f24",
+      "name": "Split Articles",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -672
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "9f4220d1-e15e-4fda-96dc-c49082de7a00",
+      "name": "Split In Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 2,
+      "position": [
+        128,
+        -672
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "3e472cdb-47b3-4b85-ad12-4d2708384b4d",
+      "name": "Clean Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        336,
+        -672
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": "gpt-4o-mini",
+        "responses": {
+          "values": [
+            {
+              "content": "=Actúa como un analista de noticias.\n\nAnaliza la siguiente noticia y devuelve SOLO un JSON válido con esta estructura exacta:\n\n{\n  \"categoria\": \"Tecnología | Negocios | Política | Otros\",\n  \"sentimiento\": \"Positivo | Negativo | Neutral\",\n  \"resumen\": \"máximo 2 líneas\"\n}\n\nREGLAS IMPORTANTES:\n- No agregues texto antes ni después del JSON\n- No expliques nada\n- No uses comillas incorrectas\n- El JSON debe ser válido y parseable\n\nNoticia:\nTítulo: {{$json[\"title\"]}}\nDescripción: {{$json[\"description\"]}}\nContenido: {{$json[\"content\"]}}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "maxTokens": 200,
+          "temperature": 0
+        }
+      },
+      "id": "c33acafe-e7c1-4e68-ae91-c00c93721e0e",
+      "name": "Analyze with AI (JSON)",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        640,
+        -672
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "AGqyK3XwT2gkvw6h",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a70078ff-e245-4e85-bb0a-b44554117e48",
+      "name": "Parse JSON Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        944,
+        -672
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        -672
+      ],
+      "id": "2d302622-f0cd-43a8-8b5a-944e77ca382f",
+      "name": "Wait",
+      "webhookId": "92321b50-a012-487c-8a84-053e4ff4ea51"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get News": {
+      "main": [
+        [
+          {
+            "node": "Check API Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check API Status": {
+      "main": [
+        [
+          {
+            "node": "Split Articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Articles": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches": {
+      "main": [
+        [
+          {
+            "node": "Clean Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean Data": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze with AI (JSON)": {
+      "main": [
+        [
+          {
+            "node": "Parse JSON Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Analyze with AI (JSON)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fddb7eb1f9d8ab3fabc315e1f703eabdba49242dd1c2e33a3a1a31d80dd61528"
+  }
+}
