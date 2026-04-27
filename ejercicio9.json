@@ -1,0 +1,231 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "066ad5b2-92d2-4822-807e-763b64b298d4",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2064,
+        -544
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://newsapi.org/v2/everything?q=tesla&sortBy=publishedAt&apiKey=pub_ad405b84176d4a70af21af0aace39b20",
+        "options": {}
+      },
+      "id": "cc06e95b-b7e0-4e0a-9341-8650be772bf7",
+      "name": "Get News",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -1872,
+        -544
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"status\"]}}",
+              "value2": "ok"
+            }
+          ]
+        }
+      },
+      "id": "91f2f28b-cf5b-45c9-93fa-0bea5b26ba29",
+      "name": "Check API Status",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -1664,
+        -544
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "articles",
+        "options": {}
+      },
+      "id": "7b3931bf-1970-4208-8ea5-643d9014f671",
+      "name": "Split Articles",
+      "type": "n8n-nodes-base.itemLists",
+      "typeVersion": 1,
+      "position": [
+        -1472,
+        -544
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "03157e4c-61b2-4313-90f3-6368fd08068b",
+      "name": "Split In Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 2,
+      "position": [
+        -1264,
+        -544
+      ]
+    },
+    {
+      "parameters": {
+        "fields": {
+          "values": [
+            {
+              "name": "title",
+              "stringValue": "={{$json[\"title\"]}}"
+            },
+            {
+              "name": "description",
+              "stringValue": "={{$json[\"description\"]}}"
+            },
+            {
+              "name": "content",
+              "stringValue": "={{$json[\"content\"]}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c48b5029-a0b3-41e9-93bb-c838f2d26750",
+      "name": "Clean Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        -1072,
+        -544
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": "gpt-4o-mini",
+        "responses": {
+          "values": [
+            {
+              "content": "=[\n  {\n    \"role\": \"user\",\n    \"content\": \"Actúa como un analista de noticias.\\n\\nResume la siguiente noticia en EXACTAMENTE 3 puntos clave.\\n\\nFormato:\\n- Punto 1\\n- Punto 2\\n- Punto 3\\n\\nNoticia:\\nTítulo: {{$json[\\\"title\\\"]}}\\nDescripción: {{$json[\\\"description\\\"]}}\\nContenido: {{$json[\\\"content\\\"]}}\\n\\nResponde en español.\"\n  }\n]"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "f9ff8153-5f22-497b-ba74-ca240496fa18",
+      "name": "Summarize with AI",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2,
+      "position": [
+        -864,
+        -544
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "AGqyK3XwT2gkvw6h",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "08a372bd-d7d7-47ac-af5f-32961e1d4220",
+      "name": "Final Output",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [
+        -560,
+        -544
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get News": {
+      "main": [
+        [
+          {
+            "node": "Check API Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check API Status": {
+      "main": [
+        [
+          {
+            "node": "Split Articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Articles": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches": {
+      "main": [
+        [
+          {
+            "node": "Clean Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean Data": {
+      "main": [
+        [
+          {
+            "node": "Summarize with AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize with AI": {
+      "main": [
+        [
+          {
+            "node": "Final Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fddb7eb1f9d8ab3fabc315e1f703eabdba49242dd1c2e33a3a1a31d80dd61528"
+  }
+}
